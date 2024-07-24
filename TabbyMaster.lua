@@ -1,4 +1,4 @@
-if getgenv().key ~= "CKio824yA" then return end -- // I swear if you looked at the source code just to get the key, fuck you
+-- // you got trolled, theirs no key system
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
@@ -198,6 +198,7 @@ task.spawn(function()
                     task.wait(0.1)
                 until functionstore.GetPollen() == 0 or togglestore.AutoConvert == false
                 cstore.Converting = false
+                TweenService:Create(Players.LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(2, Enum.EasingStyle.Linear), {CFrame = CFrame.new(fieldstore[cstore.SelectedField].Position)}):Play()
             end
         end
         task.wait(0.05)
@@ -241,3 +242,37 @@ task.spawn(function()
         task.wait(1)
     until false
 end)
+
+--[[
+section1:button({name = "button",callback = function()
+   print('hot ui lib')
+end})
+
+section1:slider({name = "rate ui lib 1-100",def = 1, max = 100,min = 1,rounding = true,ticking = false,measuring = "",callback = function(value)
+   print(value)
+end})
+
+section1:dropdown({name = "dropdown",def = "",max = 10,options = {"1","2","3","4","5","6","7","8","9","10"},callback = function(chosen)
+   print(chosen)
+end})
+
+section1:buttonbox({name = "buttonbox",def = "",max = 4, options = {"yoyoyo","yo2","yo3","yo4"},callback = function(value)
+   print(value)
+end})
+
+
+section1:multibox({name = "multibox",def = {}, max = 4,options = {"1","2","3","4"},callback = function(value)
+   print(value)
+end})
+
+section1:textbox({name = "textbox",def = "default text",placeholder = "Enter WalkSpeed",callback = function(value)
+   print(value)
+end})
+
+section1:keybind({name = "set ui keybind",def = nil,callback = function(key)
+   window.key = key
+end})
+
+local picker = section1:colorpicker({name = "color",cpname = nil,def = Color3.fromRGB(255,255,255),callback = function(value)
+   color = value
+end})--]]
