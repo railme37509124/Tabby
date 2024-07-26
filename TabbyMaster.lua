@@ -92,8 +92,8 @@ local functionstore = {
             body = {
                 ["content"] = "",
                 ["embeds"] = {{
-                    ["description"] = "Converting "..math.round(Players.LocalPlayer.CoreStats.Pollen.Value).." pollen",
-                    ["color"] = tonumber(0xff8700),
+                    ["description"] = "",
+                    ["color"] = tonumber(0x00dbff),
                     ["title"] = ":snowflake: Collecting Snowflake"
                 }}
             }
