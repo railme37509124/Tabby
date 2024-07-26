@@ -324,7 +324,7 @@ task.spawn(function()
     repeat
         if togglestore.AutoConvert and not togglestore.FarmSnowflakes then
             if functionstore.GetPollen() >= functionstore.GetCapacity() then
-                functionstore.ToWebhook("wbh_convert")
+                if cstore.WebhookConvertHoney then functionstore.ToWebhook("wbh_convert") end
                 repeat
                     if cstore.ConvertMethod == "Teleport" then
                         Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(functionstore.GetHivePosition())
@@ -395,7 +395,7 @@ task.spawn(function()
                 if Workspace:FindFirstChild("ckkk68") then
                     Workspace.ckkk68:Destroy()
                 end
-                functionstore.ToWebhook("wbh_collecting")
+                if cstore.WebhookCollectPollen then functionstore.ToWebhook("wbh_collecting") end
             end
             if togglestore.FarmTokens then
                 token = functionstore.GetToken(cstore.SelectedField, 42)
@@ -470,7 +470,7 @@ task.spawn(function()
         if togglestore.FarmSnowflakes then
             local selectedsnowflake = functionstore.GetSnowflake()
             local collecttick = tick()
-            functionstore.ToWebhook("wbh_gsnowflake")
+            if cstore.WebhookCollectSnowflake then functionstore.ToWebhook("wbh_gsnowflake") end
             repeat task.wait()
                 game:GetService("TweenService"):Create(Players.LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(1), {CFrame = selectedsnowflake.CFrame + Vector3.new(0, 15, 0)}):Play()
                 Players.LocalPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(0, 0, 0)
@@ -479,37 +479,3 @@ task.spawn(function()
         task.wait(6)
     until false
 end)
-
---[[
-section1:button({name = "button",callback = function()
-   print('hot ui lib')
-end})
-
-section1:slider({name = "rate ui lib 1-100",def = 1, max = 100,min = 1,rounding = true,ticking = false,measuring = "",callback = function(value)
-   print(value)
-end})
-
-section1:dropdown({name = "dropdown",def = "",max = 10,options = {"1","2","3","4","5","6","7","8","9","10"},callback = function(chosen)
-   print(chosen)
-end})
-
-section1:buttonbox({name = "buttonbox",def = "",max = 4, options = {"yoyoyo","yo2","yo3","yo4"},callback = function(value)
-   print(value)
-end})
-
-
-section1:multibox({name = "multibox",def = {}, max = 4,options = {"1","2","3","4"},callback = function(value)
-   print(value)
-end})
-
-section1:textbox({name = "textbox",def = "default text",placeholder = "Enter WalkSpeed",callback = function(value)
-   print(value)
-end})
-
-section1:keybind({name = "set ui keybind",def = nil,callback = function(key)
-   window.key = key
-end})
-
-local picker = section1:colorpicker({name = "color",cpname = nil,def = Color3.fromRGB(255,255,255),callback = function(value)
-   color = value
-end})--]]
