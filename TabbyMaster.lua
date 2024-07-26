@@ -198,7 +198,7 @@ AutoFarmSection:toggle({name = "Collect Hidden Stickers",def = false,callback = 
     togglestore.CollectHiddenStickers = value
 end})
 
-MiscSection:button({name = "Get Collectiles",callback = function()
+MiscSection:button({name = "Get Collectibles",callback = function()
     if not cstore.GettingRares then
         cstore.GettingRares = true
         for _, v in mapstore.Collectibles:GetChildren() do
