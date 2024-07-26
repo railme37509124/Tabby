@@ -278,7 +278,7 @@ WebhookSection:toggle({name = "Collect Pollen",def = true,callback = function(va
     cstore.WebhookCollectPollen = value
 end})
 
-WebhookSection:toggle({name = "Convert Honey",def = true,callback = function(value)
+WebhookSection:toggle({name = "Collect Snowflake",def = true,callback = function(value)
     cstore.WebhookCollectSnowflake = value
 end})
 
