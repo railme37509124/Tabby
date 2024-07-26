@@ -1,4 +1,4 @@
--- // you got trolled, theirs no key system
+if getgenv().key ~= "CKio824yA" then print("Please use the correct key") return end
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
