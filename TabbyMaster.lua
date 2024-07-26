@@ -1,15 +1,20 @@
-if getgenv().key ~= "CKio824yA" then print("Please use the correct key") return end
+if getgenv().key ~= "i8EIp92Xf" then warn("Get the right key") return end
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
+local HttpService = game:GetService("HttpService")
 local Workspace = game:GetService("Workspace")
 local Players = game:GetService("Players")
 local eventstore = {
     ToolCollect = ReplicatedStorage.Events.ToolCollect,
+    ToyEvent = ReplicatedStorage.Events.ToyEvent,
+    PlayerHiveCommand = ReplicatedStorage.Events.PlayerHiveCommand,
+    ClaimHive = ReplicatedStorage.Events.ClaimHive
 }
 local mapstore = {
     HiddenStickers = Workspace.HiddenStickers,
     Flowers = Workspace.Flowers,
     Collectibles = Workspace.Collectibles,
+    Snowflakes = Workspace.Particles.Snowflakes
 }
 local fieldstore = {}
 local rawfieldstore = {}
@@ -19,6 +24,20 @@ for _, field in Workspace.FlowerZones:GetChildren() do -- // thanks kocmoc for t
     table.insert(rawfieldstore, field.Name)
 end
 
+local cstore = {
+    Converting = false,
+    SelectedField = "Dandelion Field",
+    ConvertMethod = "Teleport",
+    WebhookUrl = "",
+    WebhookConvertHoney = true,
+    WebookCollectPollen = true,
+    WebhookCollectSnowflake = true,
+    GettingRares = false,
+    GettingToken = false,
+
+    WalkSpeed = 24,
+    JumpPower = 70,
+}
 local functionstore = {
     GetCapacity = function()
         return Players.LocalPlayer.CoreStats.Capacity.Value
@@ -29,17 +48,66 @@ local functionstore = {
     GetHivePosition = function()
         return (Players.LocalPlayer.Honeycomb.Value).patharrow.Base.Position + Vector3.new(0, 2, 0)
     end,
+    GetToken = function(field, mag)
+        for i, v in mapstore.Collectibles:GetChildren() do
+            if ((v.Position * Vector3.new(1, 0, 1)) - (fieldstore[field].Position * Vector3.new(1, 0, 1))).magnitude < mag then
+                return v
+            end
+        end
+    end,
     ClaimHive = function()
         for _, v in Workspace.Honeycombs:GetChildren() do
             if v.Owner.Value ~= nil then continue end
-            game.ReplicatedStorage.Events.ClaimHive:FireServer(v.HiveID.Value)
+            eventstore.ClaimHive:FireServer(v.HiveID.Value)
         end
     end,
     Convert = function()
-        game:GetService("ReplicatedStorage").Events.PlayerHiveCommand:FireServer("ToggleHoneyMaking")
+        eventstore.PlayerHiveCommand:FireServer("ToggleHoneyMaking")
     end,
     IsConverting = function()
         return Players.LocalPlayer.PlayerGui.ScreenGui.ActivateButton.TextBox.Text == "Stop Making Honey"
+    end,
+    ToWebhook = function(typ)
+        if cstore.WebhookUrl == "" then return end
+        local body = {}
+        if typ == "wbh_convert" then
+            body = {
+                ["content"] = "",
+                ["embeds"] = {{
+                    ["description"] = "Converting "..math.round(Players.LocalPlayer.CoreStats.Pollen.Value).." pollen",
+                    ["color"] = tonumber(0xff8700),
+                    ["title"] = ":bee: Converting Honey"
+                }}
+            }
+        elseif typ == "wbh_collecting" then
+            body = {
+                ["content"] = "",
+                ["embeds"] = {{
+                    ["description"] = "Collecting from "..cstore.SelectedField,
+                    ["color"] = tonumber(0xff8700),
+                    ["title"] = ":bee: Collecting Pollen",
+                }},
+            }
+        elseif typ == "wbh_gsnowflake" then
+            body = {
+                ["content"] = "",
+                ["embeds"] = {{
+                    ["description"] = "Converting "..math.round(Players.LocalPlayer.CoreStats.Pollen.Value).." pollen",
+                    ["color"] = tonumber(0xff8700),
+                    ["title"] = ":snowflake: Collecting Snowflake"
+                }}
+            }
+        end
+        spawn(function()
+            http.request({
+                Url = cstore.WebhookUrl,
+                Method = "POST",
+                Headers = {
+                    ["Content-Type"] = "application/json"
+                },
+                Body = HttpService:JSONEncode(body)
+            })
+        end)
     end,
 }
 functionstore["FindFlower"] = function(field)
@@ -50,11 +118,12 @@ functionstore["FindFlower"] = function(field)
         functionstore.FindFlower(field)
     end
 end
-functionstore["GetToken"] = function(field, mag)
-    for i, v in mapstore.Collectibles:GetChildren() do
-        if ((v.Position * Vector3.new(1, 0, 1)) - (fieldstore[field].Position * Vector3.new(1, 0, 1))).magnitude < mag then
-            return v
-        end
+functionstore["GetSnowflake"] = function()
+    if #mapstore.Snowflakes:GetChildren() ~= 0 then
+        return mapstore.Snowflakes:GetChildren()[math.random(1, #mapstore.Snowflakes:GetChildren())]
+    else
+        functionstore.GetSnowflake()
+        task.wait(0.1)
     end
 end
 
@@ -65,16 +134,14 @@ local togglestore = {
     CollectHiddenStickers = false,
     FarmTokens = false,
     LoopMovement = false,
-
     FarmSnowflakes = false,
-}
-local cstore = {
-    Converting = false,
-    SelectedField = "Dandelion Field",
-    GettingRares = false,
-    GettingToken = false,
-    WalkSpeed = 0,
-    JumpPower = 0,
+    AutoWealthClock = false,
+    AutoGlueDispenser = false,
+    AutoBlueberryDispenser = false,
+    AutoCoconutDispenser = false,
+    AutoStrawberryDispenser = false,
+    AutoTreatDispenser = false,
+
 }
 
 functionstore.ClaimHive()
@@ -83,20 +150,37 @@ local library = loadstring(game:HttpGet("https://pastebin.com/raw/Me1C3tm9"))()
 
 local window = library:new({LibSize = UDim2.new(0, 500, 0, 590) ,textsize = 13.5,font = Enum.Font.RobotoMono,name = "Tabby V1",color = Color3.fromRGB(255, 208, 75)})
 
+-- // autofarm
 local AutoFarmPage = window:page({name = "Autofarm"})
+local AutoFarmSection = AutoFarmPage:section({name = "AutoFarm",side = "left",size = 250})
+local ToysSection = AutoFarmPage:section({name = "Toys",side = "Right",size = 250})
+
+-- // lplr
 local LocalPlrPage = window:page({name = "Local Plr"})
 local LocalPlrSection = LocalPlrPage:section({name = "Player",side = "left",size = 250})
 
-local AutoFarmSection = AutoFarmPage:section({name = "AutoFarm",side = "left",size = 250})
-local TokenSection = AutoFarmPage:section({name = "Tokens",side = "Right",size = 250})
+-- // misc
+local MiscPage = window:page({name = "Misc"})
+local MiscSection = MiscPage:section({name = "Tokens",side = "left",size = 250})
+
+-- // webhook
+local WebhookPage = window:page({name = "Webhook"})
+local WebhookSection = WebhookPage:section({name = "Webhook Config",side = "left",size = 250})
 
 AutoFarmSection:toggle({name = "Auto Dig",def = false,callback = function(value)
     togglestore.AutoDig = value
 end})
 
 AutoFarmSection:toggle({name = "Auto Farm Field",def = false,callback = function(value)
+    cstore.WalkingToField = false
+    cstore.GettingToken = false
     togglestore.AutoFarm = value
 end})
+
+AutoFarmSection:dropdown({name = "Convert Mode",def = "Teleport", max = 2, options = {"Teleport", "Walk"},callback = function(chosen)
+    cstore.ConvertMethod = chosen
+end})
+
 
 AutoFarmSection:toggle({name = "Auto Convert",def = false,callback = function(value)
     togglestore.AutoConvert = value
@@ -114,7 +198,7 @@ AutoFarmSection:toggle({name = "Collect Hidden Stickers",def = false,callback = 
     togglestore.CollectHiddenStickers = value
 end})
 
-TokenSection:button({name = "Get Rares",callback = function()
+MiscSection:button({name = "Get Rares",callback = function()
     if not cstore.GettingRares then
         cstore.GettingRares = true
         for _, v in mapstore.Collectibles:GetChildren() do
@@ -128,9 +212,45 @@ TokenSection:button({name = "Get Rares",callback = function()
     end
 end})
 
---[[TokenSection:toggle({name = "Farm Snowflakes [COMING SOON]",def = false,callback = function(value)
+ToysSection:toggle({name = "Farm Snowflakes",def = false,callback = function(value)
     togglestore.FarmSnowflakes = value
-end})--]]
+end})
+
+ToysSection:toggle({name = "Auto Wealth Clock",def = false,callback = function(value)
+    togglestore.AutoWealthClock = value
+end})
+
+ToysSection:toggle({name = "Auto Glue Dispenser",def = false,callback = function(value)
+    togglestore.AutoGlueDispenser = value
+end})
+
+ToysSection:toggle({name = "Auto Blueberry Dispenser",def = false,callback = function(value)
+    togglestore.AutoBlueberryDispenser = value
+end})
+
+ToysSection:toggle({name = "Auto Strawberry Dispenser",def = false,callback = function(value)
+    togglestore.AutoStrawberryDispenser = value
+end})
+
+ToysSection:toggle({name = "Auto Coconut Dispenser",def = false,callback = function(value)
+    togglestore.AutoCoconutDispenser = value
+end})
+
+ToysSection:toggle({name = "Auto Treat Dispenser",def = false,callback = function(value)
+    togglestore.AutoTreatDispenser = value
+end})
+
+ToysSection:toggle({name = "Boost Blue Field",def = false,callback = function(value)
+    togglestore.BoostBlueField = value
+end})
+
+ToysSection:toggle({name = "Boost Red Field",def = false,callback = function(value)
+    togglestore.BoostRedField = value
+end})
+
+ToysSection:toggle({name = "Boost White Field",def = false,callback = function(value)
+    togglestore.BoostWhiteField = value
+end})
 
 LocalPlrSection:slider({name = "WalkSpeed",def = 24, max = 200,min = 16,rounding = true,ticking = false,measuring = "",callback = function(value)
     Players.LocalPlayer.Character.Humanoid.WalkSpeed = value
@@ -144,6 +264,22 @@ end})
 
 LocalPlrSection:toggle({name = "Loop Movement",def = false,callback = function(value)
     togglestore.LoopMovement = value
+end})
+
+WebhookSection:textbox({name = "textbox",def = "",placeholder = "https://discord.com/api/v9/webhooks/",callback = function(value)
+    cstore.WebhookUrl = value
+ end})
+
+WebhookSection:toggle({name = "Convert Honey",def = true,callback = function(value)
+    cstore.WebhookConvertHoney = value
+end})
+
+WebhookSection:toggle({name = "Collect Pollen",def = true,callback = function(value)
+    cstore.WebhookCollectPollen = value
+end})
+
+WebhookSection:toggle({name = "Convert Honey",def = true,callback = function(value)
+    cstore.WebhookCollectSnowflake = value
 end})
 
 
@@ -183,22 +319,55 @@ task.spawn(function()
     until false
 end)
 
+p = nil
 task.spawn(function()
     repeat
-        if togglestore.AutoConvert then
+        if togglestore.AutoConvert and not togglestore.FarmSnowflakes then
             if functionstore.GetPollen() >= functionstore.GetCapacity() then
-                cstore.Converting = true
-                task.wait(0.5)
-                functionstore.Convert()
+                functionstore.ToWebhook("wbh_convert")
                 repeat
-                    Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(functionstore.GetHivePosition())
+                    if cstore.ConvertMethod == "Teleport" then
+                        Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(functionstore.GetHivePosition())
+                        cstore.Converting = true
+                        task.wait(0.5)
+                        functionstore.Convert()
+                    elseif cstore.ConvertMethod == "Reset" then
+                        print("This method is unavailable")
+                    elseif cstore.ConvertMethod == "Walk" then
+                        if not cstore.Converting then
+                            cstore.Converting = true
+                            local p = Instance.new("Part")
+                            p.Parent = Workspace
+                            p.Name = "ckkk67"
+                            p.Size = Vector3.new(10000, 5, 10000)
+                            p.Position = Players.LocalPlayer.Character.HumanoidRootPart.Position + Vector3.new(0, 370, 0)
+                            p.CanCollide = true
+                            p.Anchored = true
+                            p.Transparency = 1
+                            Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(p.Position + Vector3.new(0, 9, 0))
+                            repeat
+                                Players.LocalPlayer.Character.Humanoid:MoveTo(functionstore.GetHivePosition())
+                                task.wait(1)
+                            until (((functionstore.GetHivePosition() * Vector3.new(1, 0, 1)) - (Players.LocalPlayer.Character.HumanoidRootPart.Position * Vector3.new(1, 0, 1))).magnitude < 15) or not togglestore.AutoConvert
+                            p = 0
+                            Workspace:FindFirstChild("ckkk67"):Destroy()
+                            wait(3)
+                            functionstore.Convert()
+                        end
+                    end
                     if functionstore.IsConverting() == false then
                         functionstore.Convert()
                     end
                     task.wait(0.1)
                 until functionstore.GetPollen() == 0 or togglestore.AutoConvert == false
                 cstore.Converting = false
-                TweenService:Create(Players.LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(2, Enum.EasingStyle.Linear), {CFrame = CFrame.new(fieldstore[cstore.SelectedField].Position)}):Play()
+                if togglestore.AutoFarm then
+                    TweenService:Create(Players.LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(2, Enum.EasingStyle.Linear), {CFrame = CFrame.new(fieldstore[cstore.SelectedField].Position)}):Play()
+                end
+                if Workspace:FindFirstChild("ckkk67") then
+                    Workspace.ckkk67:Destroy()
+                end
+                cstore.WalkingToField = false
             end
         end
         task.wait(0.05)
@@ -207,7 +376,27 @@ end)
 
 task.spawn(function()
     repeat
-        if togglestore.AutoFarm and not cstore.Converting then
+        if togglestore.AutoFarm and not cstore.Converting and not togglestore.FarmSnowflakes then
+            if not cstore.WalkingToField then
+                cstore.WalkingToField = true
+                local py = Instance.new("Part")
+                py.Parent = Workspace
+                py.Name = "ckkk68"
+                py.Size = Vector3.new(10000, 5, 10000)
+                py.Position = Players.LocalPlayer.Character.HumanoidRootPart.Position + Vector3.new(0, 370, 0)
+                py.CanCollide = true
+                py.Anchored = true
+                py.Transparency = 1
+                Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(py.Position + Vector3.new(0, 9, 0))
+                repeat
+                    Players.LocalPlayer.Character.Humanoid:MoveTo(fieldstore[cstore.SelectedField].Position)
+                    task.wait(1)
+                until (((fieldstore[cstore.SelectedField].Position * Vector3.new(1, 0, 1)) - (Players.LocalPlayer.Character.HumanoidRootPart.Position * Vector3.new(1, 0, 1))).magnitude < 15) or not togglestore.AutoFarm
+                if Workspace:FindFirstChild("ckkk68") then
+                    Workspace.ckkk68:Destroy()
+                end
+                functionstore.ToWebhook("wbh_collecting")
+            end
             if togglestore.FarmTokens then
                 token = functionstore.GetToken(cstore.SelectedField, 42)
                 if token then
@@ -240,6 +429,54 @@ task.spawn(function()
             end
         end
         task.wait(1)
+    until false
+end)
+
+task.spawn(function()
+    repeat
+        if togglestore.AutoGlueDispenser then
+            eventstore.ToyEvent:FireServer("Glue Dispenser")
+        end
+        if togglestore.AutoBlueberryDispenser then
+            eventstore.ToyEvent:FireServer("Blueberry Dispenser")
+        end
+        if togglestore.AutoStrawberryDispenser then
+            eventstore.ToyEvent:FireServer("Strawberry Dispenser")
+        end
+        if togglestore.AutoCoconutDispenser then
+            eventstore.ToyEvent:FireServer("Coconut Dispenser")
+        end
+        if togglestore.AutoTreatDispenser then
+            eventstore.ToyEvent:FireServer("Treat Dispenser")
+        end
+        if togglestore.AutoWealthClock then
+            eventstore.ToyEvent:FireServer("Wealth Clock")
+        end
+        if togglestore.BoostBlueField then
+            eventstore.ToyEvent:FireServer("Blue Field Booster")
+        end
+        if togglestore.BoostRedField then
+            eventstore.ToyEvent:FireServer("Red Field Booster")
+        end
+        if togglestore.BoostWhiteField then
+            eventstore.ToyEvent:FireServer("Field Booster")
+        end
+        task.wait(3)
+    until false
+end)
+
+task.spawn(function()
+    repeat
+        if togglestore.FarmSnowflakes then
+            local selectedsnowflake = functionstore.GetSnowflake()
+            local collecttick = tick()
+            functionstore.ToWebhook("wbh_gsnowflake")
+            repeat task.wait()
+                game:GetService("TweenService"):Create(Players.LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(1), {CFrame = selectedsnowflake.CFrame + Vector3.new(0, 15, 0)}):Play()
+                Players.LocalPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(0, 0, 0)
+            until (tick() - collecttick > 4.5)  
+        end
+        task.wait(6)
     until false
 end)
 
