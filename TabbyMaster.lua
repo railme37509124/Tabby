@@ -27,7 +27,7 @@ end
 local cstore = {
     Converting = false,
     SelectedField = "Dandelion Field",
-    ConvertMethod = "Teleport",
+    ConvertMethod = "Walk",
     WebhookUrl = "",
     WebhookConvertHoney = true,
     WebookCollectPollen = true,
