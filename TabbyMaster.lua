@@ -75,7 +75,7 @@ local functionstore = {
             ["embeds"] = {{
                 ["description"] = fd,
                 ["color"] = tonumber(0xff8700),
-                ["title"] = "pencil: Feedback"
+                ["title"] = ":pencil: Feedback"
             }}
         }
         spawn(function()
