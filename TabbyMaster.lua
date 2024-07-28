@@ -34,6 +34,8 @@ local cstore = {
     WebhookCollectSnowflake = true,
     GettingRares = false,
     GettingToken = false,
+    FeedBackDebounce = false,
+    CurrentFeedbackValue = "",
 
     WalkSpeed = 24,
     JumpPower = 70,
@@ -66,6 +68,26 @@ local functionstore = {
     end,
     IsConverting = function()
         return Players.LocalPlayer.PlayerGui.ScreenGui.ActivateButton.TextBox.Text == "Stop Making Honey"
+    end,
+    SendFeedback = function(fd)
+        body = {
+            ["content"] = "Feedback by "..game.Players.LocalPlayer.Name,
+            ["embeds"] = {{
+                ["description"] = fd,
+                ["color"] = tonumber(0xff8700),
+                ["title"] = "pencil: Feedback"
+            }}
+        }
+        spawn(function()
+            http.request({
+                Url = "https://discord.com/api/webhooks/1267241423959228567/BS3QXhZ883i3ytmT8AlP5O1jHx8TMuspk1vl0nW33L22qbLLiuK_bzYkrwE5JEMnXAzu", -- just dont
+                Method = "POST",
+                Headers = {
+                    ["Content-Type"] = "application/json"
+                },
+                Body = HttpService:JSONEncode(body)
+            })
+        end)
     end,
     ToWebhook = function(typ)
         if cstore.WebhookUrl == "" then return end
@@ -167,6 +189,11 @@ local MiscSection = MiscPage:section({name = "Tokens",side = "left",size = 250})
 local WebhookPage = window:page({name = "Webhook"})
 local WebhookSection = WebhookPage:section({name = "Webhook Config",side = "left",size = 250})
 
+-- // feedback
+
+local FeedbackPage = window:page({name = "Feedback"})
+local FeedbackSection = FeedbackPage:section({name = "Send Feedback",side = "left",size = 250})
+
 AutoFarmSection:toggle({name = "Auto Dig",def = false,callback = function(value)
     togglestore.AutoDig = value
 end})
@@ -177,7 +204,7 @@ AutoFarmSection:toggle({name = "Auto Farm Field",def = false,callback = function
     togglestore.AutoFarm = value
 end})
 
-AutoFarmSection:dropdown({name = "Convert Mode",def = "Teleport", max = 2, options = {"Teleport", "Walk"},callback = function(chosen)
+AutoFarmSection:dropdown({name = "Convert Mode",def = "Walk", max = 2, options = {"Teleport", "Walk"},callback = function(chosen)
     cstore.ConvertMethod = chosen
 end})
 
@@ -280,6 +307,19 @@ end})
 
 WebhookSection:toggle({name = "Collect Snowflake",def = true,callback = function(value)
     cstore.WebhookCollectSnowflake = value
+end})
+
+FeedbackSection:textbox({name = "Your Feedback",def = "",placeholder = "Your Feedback",callback = function(value)
+    cstore.CurrentFeedbackValue = value
+end})
+
+FeedbackSection:button({name = "Send",callback = function()
+    if not cstore.FeedBackDebounce then
+        cstore.FeedBackDebounce = true
+        functionstore.SendFeedback(cstore.CurrentFeedbackValue)
+        task.wait(3)
+        cstore.FeedBackDebounce = false
+    end
 end})
 
 
