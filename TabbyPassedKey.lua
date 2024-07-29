@@ -441,7 +441,6 @@ task.spawn(function()
             if togglestore.FarmTokens then
                 token = functionstore.GetToken(cstore.SelectedField, 42)
                 if token then
-                    print(token)
                     cstore.GettingToken = true
                     Players.LocalPlayer.Character.Humanoid:MoveTo(token.Position)
                     task.wait(0.31)
