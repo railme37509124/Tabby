@@ -52,7 +52,8 @@ local cstore = {
     GettingToken = false,
     FeedBackDebounce = false,
     CurrentFeedbackValue = "",
-
+    VersionExecuted = game:HttpGet("https://raw.githubusercontent.com/railme37509124/Tabby/main/TabbyPassedKey.lua", true),
+    Outdated = false,
     WalkSpeed = 24,
     JumpPower = 70,
 }
@@ -519,5 +520,19 @@ task.spawn(function()
             until (tick() - collecttick > 4.5)  
         end
         task.wait(6)
+    until false
+end)
+
+task.spawn(function()
+    repeat
+        if cstore.VersionExecuted ~= game:HttpGet("https://raw.githubusercontent.com/railme37509124/Tabby/main/TabbyPassedKey.lua", true) then
+            cstore.VersionExecuted = game:HttpGet("https://raw.githubusercontent.com/railme37509124/Tabby/main/TabbyPassedKey.lua", true)
+            game.StarterGui:SetCore("SendNotification", {
+                Title = "New Version"; 
+                Text = "A new version of tabby is available";
+                Duration = 600;
+            })
+        end
+        task.wait(10)
     until false
 end)
