@@ -1,3 +1,5 @@
+-- // no bypassing the key plsss uwu
+
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 local HttpService = game:GetService("HttpService")
