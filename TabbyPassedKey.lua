@@ -187,7 +187,7 @@ end
 
 functionstore.ClaimHive()
 
-local library = loadstring(game:HttpGet("https://pastebin.com/raw/Me1C3tm9"))()
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/railme37509124/Tabby/main/Lib.lua"))()
 
 local window = library:new({LibSize = UDim2.new(0, 500, 0, 590) ,textsize = 13.5,font = Enum.Font.RobotoMono,name = "Tabby V1",color = Color3.fromRGB(255, 208, 75)})
 
