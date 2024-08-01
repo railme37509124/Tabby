@@ -144,7 +144,7 @@ local function QRMEB_fake_script() -- Submit.LocalScript
 	local script = Instance.new('LocalScript', Submit)
 
 	script.Parent.MouseButton1Click:Connect(function()
-		if script.Parent.Parent.Key.Text == "7Uw028Rxa+" then
+		if script.Parent.Parent.Key.Text == "!qqA?.*55t" then
             script.Parent.Parent.Parent.Parent.Parent.Enabled = false
 			loadstring(game:HttpGet("https://raw.githubusercontent.com/railme37509124/Tabby/main/TabbyPassedKey.lua", true))()
 		    script.Parent.Parent.Parent.Parent.Parent:Destroy()
