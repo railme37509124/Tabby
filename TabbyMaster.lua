@@ -138,21 +138,15 @@ UIStroke_4.Parent = Submit
 UIStroke_4.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 
 UIStroke_5.Parent = TextLabel_2
--- Scripts:
 
-local function QRMEB_fake_script() -- Submit.LocalScript 
-	local script = Instance.new('LocalScript', Submit)
-
-	script.Parent.MouseButton1Click:Connect(function()
-		if script.Parent.Parent.Key.Text == "!qqA?.*55t" then
-            script.Parent.Parent.Parent.Parent.Parent.Enabled = false
-			loadstring(game:HttpGet("https://raw.githubusercontent.com/railme37509124/Tabby/main/TabbyPassedKey.lua", true))()
-		    script.Parent.Parent.Parent.Parent.Parent:Destroy()
-        else
-            script.Parent.Text = "Wrong key!"
-            wait(2)
-            script.Parent.Text = "Submit"
-        end
-	end)
-end
-coroutine.wrap(QRMEB_fake_script)()
+	submit.MouseButton1Click:Connect(function()
+		if Key.Text == "!qqA?.*55t" then
+                    keysys.Enabled = false
+                    loadstring(game:HttpGet("https://raw.githubusercontent.com/railme37509124/Tabby/main/TabbyPassedKey.lua", true))()
+		    keysys:Destroy()
+                 else
+                    submit.Text = "Wrong key!"
+                    wait(2)
+                    submit.Text = "Submit"
+                  end
+	 end)
