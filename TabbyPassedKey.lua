@@ -52,6 +52,7 @@ local cstore = {
     GettingToken = false,
     FeedBackDebounce = false,
     CurrentFeedbackValue = "",
+    CurrentFeedbackDiscordUser = "None",
     VersionExecuted = game:HttpGet("https://raw.githubusercontent.com/railme37509124/Tabby/main/TabbyPassedKey.lua", true),
     Outdated = false,
     WalkSpeed = 24,
@@ -107,7 +108,7 @@ local functionstore = {
     end,
     SendFeedback = function(fd)
         body = {
-            ["content"] = "Feedback by "..game.Players.LocalPlayer.Name,
+            ["content"] = "Feedback by "..game.Players.LocalPlayer.Name .. " ("..(cstore.CurrentFeedbackDiscordUser)..")",
             ["embeds"] = {{
                 ["description"] = fd,
                 ["color"] = tonumber(0xff8700),
@@ -116,7 +117,7 @@ local functionstore = {
         }
         spawn(function()
             http.request({
-                Url = "https://discord.com/api/webhooks/1267241423959228567/BS3QXhZ883i3ytmT8AlP5O1jHx8TMuspk1vl0nW33L22qbLLiuK_bzYkrwE5JEMnXAzu", -- just dont
+                Url = "https://discord.com/api/webhooks/1267241423959228567/BS3QXhZ883i3ytmT8AlP5O1jHx8TMuspk1vl0nW33L22qbLLiuK_bzYkrwE5JEMnXAzu", -- congrats on finding a webhook
                 Method = "POST",
                 Headers = {
                     ["Content-Type"] = "application/json"
@@ -326,6 +327,10 @@ end})
 
 WebhookSection:toggle({name = "Collect Snowflake",def = true,callback = function(value)
     cstore.WebhookCollectSnowflake = value
+end})
+--CurrentFeedbackDiscordUser
+FeedbackSection:textbox({name = "Contact",def = "",placeholder = "Discord user (contact)",callback = function(value)
+    cstore.CurrentFeedbackDiscordUser = value
 end})
 
 FeedbackSection:textbox({name = "Your Feedback",def = "",placeholder = "Your Feedback",callback = function(value)
