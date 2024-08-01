@@ -139,14 +139,14 @@ UIStroke_4.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 
 UIStroke_5.Parent = TextLabel_2
 
-	submit.MouseButton1Click:Connect(function()
+	Submit.MouseButton1Click:Connect(function()
 		if Key.Text == "!qqA?.*55t" then
                     keysys.Enabled = false
                     loadstring(game:HttpGet("https://raw.githubusercontent.com/railme37509124/Tabby/main/TabbyPassedKey.lua", true))()
 		    keysys:Destroy()
                  else
-                    submit.Text = "Wrong key!"
+                    Submit.Text = "Wrong key!"
                     wait(2)
-                    submit.Text = "Submit"
+                    Submit.Text = "Submit"
                   end
 	 end)
