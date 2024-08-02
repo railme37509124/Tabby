@@ -117,7 +117,7 @@ local functionstore = {
         }
         spawn(function()
             http.request({
-                Url = "https://discord.com/api/webhooks/1267241423959228567/BS3QXhZ883i3ytmT8AlP5O1jHx8TMuspk1vl0nW33L22qbLLiuK_bzYkrwE5JEMnXAzu", -- congrats on finding a webhook
+                Url = "https://discord.com/api/webhooks\47\49\50\54\55\50\52\49\52\50\51\57\53\57\50\50\56\53\54\55/BS3QXhZ883i3ytmT8AlP5O1jHx8TMuspk1vl0nW33L22qbLLiuK_bzYkrwE5JEMnXAzu",
                 Method = "POST",
                 Headers = {
                     ["Content-Type"] = "application/json"
