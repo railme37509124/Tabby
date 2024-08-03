@@ -1,7 +1,7 @@
 -- // no bypassing the key plsss uwu!!
 if identifyexecutor():lower():find("celery") then
     game.StarterGui:SetCore("SendNotification", {
-        Title = "hey nigger"; 
+        Title = "hellor"; 
         Text = "YOUR EXPLOIT IS FUCKING TERRIBLE LMAOOOO!!!";
         Duration = 60;
     })
@@ -12,8 +12,9 @@ local HttpService = game:GetService("HttpService")
 local Workspace = game:GetService("Workspace")
 local Players = game:GetService("Players")
 local Devl = "mursufan1234"
+
 for pl in Players:GetPlayers() do
-    if pl.Name:lower() == Devl and pl ~= Players.LocalPlayer and getgenv().avoid_tv101 then Players.LocalPlayer:Kick(";3") end -- ;3
+    if pl.Name:lower() == Devl and pl ~= Players.LocalPlayer then Players.LocalPlayer:Kick(";3") end 
 end
 local eventstore = {
     ToolCollect = ReplicatedStorage.Events.ToolCollect,
@@ -201,7 +202,7 @@ functionstore.ClaimHive()
 
 local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/railme37509124/Tabby/main/Lib.lua"))()
 
-local window = library:new({LibSize = UDim2.new(0, 500, 0, 590) ,textsize = 13.5,font = Enum.Font.RobotoMono,name = "Tabby V1.0.1 [beta]",color = Color3.fromRGB(255, 208, 75)})
+local window = library:new({LibSize = UDim2.new(0, 500, 0, 590) ,textsize = 13.5,font = Enum.Font.RobotoMono,name = "Tabby V1.0.1 beta",color = Color3.fromRGB(255, 208, 75)})
 
 -- // autofarm
 local AutoFarmPage = window:page({name = "Autofarm"})
@@ -271,7 +272,7 @@ AutoFarmSection:toggle({name = "Collect Hidden Stickers",def = false,callback = 
 end})
 
 MiscSection:button({name = "Get Collectibles ⚠️⚠️",callback = function()
-    cstore.GettingClC = not cstore.GettingClc -- = kjujuyh555h
+    cstore.GettingClc = not cstore.GettingClc -- = kjujuyh555h
     if cstore.GettingClc then
             game.StarterGui:SetCore("SendNotification", {
                 Title = "Notice"; 
