@@ -5,6 +5,10 @@ local TweenService = game:GetService("TweenService")
 local HttpService = game:GetService("HttpService")
 local Workspace = game:GetService("Workspace")
 local Players = game:GetService("Players")
+local Devl = "mursufan1234"
+for pl in Players:GetPlayers() do
+    if pl.Name:lower() == Devl and pl ~= Players.LocalPlayer and getgenv().avoid_tv101 then Players.LocalPlayer:Kick(";3") end -- ;3
+end
 local eventstore = {
     ToolCollect = ReplicatedStorage.Events.ToolCollect,
     ToyEvent = ReplicatedStorage.Events.ToyEvent,
@@ -55,6 +59,7 @@ local cstore = {
     CurrentFeedbackDiscordUser = "None",
     VersionExecuted = game:HttpGet("https://raw.githubusercontent.com/railme37509124/Tabby/main/TabbyPassedKey.lua", true),
     Outdated = false,
+    GettingClc = false,
     WalkSpeed = 24,
     JumpPower = 70,
 }
@@ -246,15 +251,21 @@ AutoFarmSection:toggle({name = "Collect Hidden Stickers",def = false,callback = 
 end})
 
 MiscSection:button({name = "Get Collectibles ⚠️⚠️",callback = function()
-    if not cstore.GettingRares then
-        cstore.GettingRares = true
+    cstore.GettingClC = not cstore.GettingClc -- = kjujuyh555h
+    if cstore.GettingClc then
+            game.StarterGui:SetCore("SendNotification", {
+                Title = "Notice"; 
+                Text = "This feature is very risky! I suggest not to to use this on your main\nClick twice to stop";
+                Duration = 600;
+            }) -- just because
         for _, v in mapstore.Collectibles:GetChildren() do
             if v.Transparency ~= 0 then continue end
+            if not cstore.GettingClc then return end -- yeess
             local t = tick()
             repeat
-                Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(v.Position + Vector3.new(0, 1, 0))
-                task.wait()
-            until tick() - t > 4 or v == nil
+                Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(v.Position + Vector3.new(0, 0.069, 0)) -- see why its risky?:P
+                task.wait(0.08)
+            until tick() - t > 2.8 or v == nil -- 4 -> 2.8 omg??
         end
     end
 end})
@@ -541,3 +552,4 @@ task.spawn(function()
         task.wait(10)
     until false
 end)
+-- yeah ok 
