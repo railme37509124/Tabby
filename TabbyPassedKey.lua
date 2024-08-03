@@ -190,7 +190,7 @@ functionstore.ClaimHive()
 
 local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/railme37509124/Tabby/main/Lib.lua"))()
 
-local window = library:new({LibSize = UDim2.new(0, 500, 0, 590) ,textsize = 13.5,font = Enum.Font.RobotoMono,name = "Tabby V1",color = Color3.fromRGB(255, 208, 75)})
+local window = library:new({LibSize = UDim2.new(0, 500, 0, 590) ,textsize = 13.5,font = Enum.Font.RobotoMono,name = "Tabby V1.0.1 [beta]",color = Color3.fromRGB(255, 208, 75)})
 
 -- // autofarm
 local AutoFarmPage = window:page({name = "Autofarm"})
@@ -224,7 +224,7 @@ AutoFarmSection:toggle({name = "Auto Farm Field",def = false,callback = function
     togglestore.AutoFarm = value
 end})
 
-AutoFarmSection:dropdown({name = "Convert Mode",def = "Walk", max = 2, options = {"Teleport", "Walk"},callback = function(chosen)
+AutoFarmSection:dropdown({name = "Convert Mode",def = "Walk", max = 2, options = {"Teleport ⚠️", "Walk"},callback = function(chosen)
     cstore.ConvertMethod = chosen
 end})
 
@@ -245,7 +245,7 @@ AutoFarmSection:toggle({name = "Collect Hidden Stickers",def = false,callback = 
     togglestore.CollectHiddenStickers = value
 end})
 
-MiscSection:button({name = "Get Collectibles",callback = function()
+MiscSection:button({name = "Get Collectibles ⚠️⚠️",callback = function()
     if not cstore.GettingRares then
         cstore.GettingRares = true
         for _, v in mapstore.Collectibles:GetChildren() do
@@ -259,7 +259,7 @@ MiscSection:button({name = "Get Collectibles",callback = function()
     end
 end})
 
-ToysSection:toggle({name = "Farm Snowflakes",def = false,callback = function(value)
+ToysSection:toggle({name = "Farm Snowflakes ⚠️",def = false,callback = function(value)
     togglestore.FarmSnowflakes = value
 end})
 
@@ -338,12 +338,12 @@ FeedbackSection:textbox({name = "Your Feedback",def = "",placeholder = "Your Fee
 end})
 
 FeedbackSection:button({name = "Send",callback = function()
-    if not cstore.FeedBackDebounce then
+    spawn(function() if not cstore.FeedBackDebounce then
         cstore.FeedBackDebounce = true
         functionstore.SendFeedback(cstore.CurrentFeedbackValue)
         task.wait(3)
         cstore.FeedBackDebounce = false
-    end
+    end end)
 end})
 
 
