@@ -1,11 +1,9 @@
 -- // no bypassing the key plsss uwu!!
-if identifyexecutor():lower():find("celery") then
     game.StarterGui:SetCore("SendNotification", {
-        Title = "hellor"; 
-        Text = "YOUR EXPLOIT IS FUCKING TERRIBLE LMAOOOO!!!";
-        Duration = 60;
+        Title = identifyexecutor(); 
+        Text = "test";
+        Duration = 10;
     })
-end
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 local HttpService = game:GetService("HttpService")
@@ -14,8 +12,11 @@ local Players = game:GetService("Players")
 local Devl = "mursufan1234"
 
 for pl in Players:GetPlayers() do
-    if pl.Name:lower() == Devl and pl ~= Players.LocalPlayer then Players.LocalPlayer:Kick(";3") end 
+    if pl.Name:lower() == Devl and pl ~= Players.LocalPlayer then
+        Players.LocalPlayer:Kick("lol") 
+    end 
 end
+
 local eventstore = {
     ToolCollect = ReplicatedStorage.Events.ToolCollect,
     ToyEvent = ReplicatedStorage.Events.ToyEvent,
@@ -261,9 +262,9 @@ AutoFarmSection:toggle({name = "Farm Tokens",def = false,callback = function(val
 end})
 
 AutoFarmSection:toggle({name = "Collect Hidden Stickers",def = false,callback = function(value)
-    if identifyexecutor():lower():find("celery") or fireclickdetector == nil then
+    if fireclickdetector == nil then
             game.StarterGui:SetCore("SendNotification", {
-                Title = "cum"; 
+                Title = "noticey"; 
                 Text = "your executor is so bad it doesnt even have support for this feature lmao";
                 Duration = 600;
             })
