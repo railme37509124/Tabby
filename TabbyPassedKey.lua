@@ -1,5 +1,11 @@
 -- // no bypassing the key plsss uwu!!
-
+if identifyexecutor():lower():find("celery") then
+    game.StarterGui:SetCore("SendNotification", {
+        Title = "hey nigger"; 
+        Text = "YOUR EXPLOIT IS FUCKING TERRIBLE LMAOOOO!!!";
+        Duration = 60;
+    })
+end
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 local HttpService = game:GetService("HttpService")
@@ -230,6 +236,13 @@ AutoFarmSection:toggle({name = "Auto Farm Field",def = false,callback = function
 end})
 
 AutoFarmSection:dropdown({name = "Convert Mode",def = "Walk", max = 2, options = {"Teleport ⚠️", "Walk"},callback = function(chosen)
+    if chosen == "Teleport" then
+    game.StarterGui:SetCore("SendNotification", {
+        Title = "notice"; 
+        Text = "this feature is broken yeah sorry";
+        Duration = 10;
+     })
+     end
     cstore.ConvertMethod = chosen
 end})
 
@@ -247,6 +260,13 @@ AutoFarmSection:toggle({name = "Farm Tokens",def = false,callback = function(val
 end})
 
 AutoFarmSection:toggle({name = "Collect Hidden Stickers",def = false,callback = function(value)
+    if identifyexecutor():lower():find("celery") or fireclickdetector == nil then
+            game.StarterGui:SetCore("SendNotification", {
+                Title = "cum"; 
+                Text = "your executor is so bad it doesnt even have support for this feature lmao";
+                Duration = 600;
+            })
+    end
     togglestore.CollectHiddenStickers = value
 end})
 
@@ -255,8 +275,8 @@ MiscSection:button({name = "Get Collectibles ⚠️⚠️",callback = function()
     if cstore.GettingClc then
             game.StarterGui:SetCore("SendNotification", {
                 Title = "Notice"; 
-                Text = "This feature is very risky! I suggest not to to use this on your main\nClick twice to stop";
-                Duration = 600;
+                Text = "This feature is very risky! I suggest not to to use this on your main\nClick again to stop";
+                Duration = 15;
             }) -- just because
         for _, v in mapstore.Collectibles:GetChildren() do
             if v.Transparency ~= 0 then continue end
@@ -362,7 +382,7 @@ end})
 
 end})--]]
 
--- // loops
+-- // loops (gonna kill you if u skid broo)
 
 --[[
 task.spawn(function()
@@ -402,6 +422,7 @@ task.spawn(function()
                 if cstore.WebhookConvertHoney then functionstore.ToWebhook("wbh_convert") end
                 repeat
                     if cstore.ConvertMethod == "Teleport" then
+                        return
                         Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(functionstore.GetHivePosition())
                         cstore.Converting = true
                         task.wait(0.5)
