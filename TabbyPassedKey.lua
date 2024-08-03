@@ -1,22 +1,10 @@
 -- // no bypassing the key plsss uwu!!
-    game.StarterGui:SetCore("SendNotification", {
-        Title = identifyexecutor(); 
-        Text = "test";
-        Duration = 10;
-    })
+
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 local HttpService = game:GetService("HttpService")
 local Workspace = game:GetService("Workspace")
 local Players = game:GetService("Players")
-local Devl = "mursufan1234"
-
-for pl in Players:GetPlayers() do
-    if pl.Name:lower() == Devl and pl ~= Players.LocalPlayer then
-        Players.LocalPlayer:Kick("lol") 
-    end 
-end
-
 local eventstore = {
     ToolCollect = ReplicatedStorage.Events.ToolCollect,
     ToyEvent = ReplicatedStorage.Events.ToyEvent,
@@ -67,7 +55,6 @@ local cstore = {
     CurrentFeedbackDiscordUser = "None",
     VersionExecuted = game:HttpGet("https://raw.githubusercontent.com/railme37509124/Tabby/main/TabbyPassedKey.lua", true),
     Outdated = false,
-    GettingClc = false,
     WalkSpeed = 24,
     JumpPower = 70,
 }
@@ -203,7 +190,7 @@ functionstore.ClaimHive()
 
 local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/railme37509124/Tabby/main/Lib.lua"))()
 
-local window = library:new({LibSize = UDim2.new(0, 500, 0, 590) ,textsize = 13.5,font = Enum.Font.RobotoMono,name = "Tabby V1.0.1 beta",color = Color3.fromRGB(255, 208, 75)})
+local window = library:new({LibSize = UDim2.new(0, 500, 0, 590) ,textsize = 13.5,font = Enum.Font.RobotoMono,name = "Tabby V1",color = Color3.fromRGB(255, 208, 75)})
 
 -- // autofarm
 local AutoFarmPage = window:page({name = "Autofarm"})
@@ -237,14 +224,7 @@ AutoFarmSection:toggle({name = "Auto Farm Field",def = false,callback = function
     togglestore.AutoFarm = value
 end})
 
-AutoFarmSection:dropdown({name = "Convert Mode",def = "Walk", max = 2, options = {"Teleport ⚠️", "Walk"},callback = function(chosen)
-    if chosen == "Teleport" then
-    game.StarterGui:SetCore("SendNotification", {
-        Title = "notice"; 
-        Text = "this feature is broken yeah sorry";
-        Duration = 10;
-     })
-     end
+AutoFarmSection:dropdown({name = "Convert Mode",def = "Walk", max = 2, options = {"Teleport", "Walk"},callback = function(chosen)
     cstore.ConvertMethod = chosen
 end})
 
@@ -262,37 +242,24 @@ AutoFarmSection:toggle({name = "Farm Tokens",def = false,callback = function(val
 end})
 
 AutoFarmSection:toggle({name = "Collect Hidden Stickers",def = false,callback = function(value)
-    if fireclickdetector == nil then
-            game.StarterGui:SetCore("SendNotification", {
-                Title = "noticey"; 
-                Text = "your executor is so bad it doesnt even have support for this feature lmao";
-                Duration = 600;
-            })
-    end
     togglestore.CollectHiddenStickers = value
 end})
 
-MiscSection:button({name = "Get Collectibles ⚠️⚠️",callback = function()
-    cstore.GettingClc = not cstore.GettingClc -- = kjujuyh555h
-    if cstore.GettingClc then
-            game.StarterGui:SetCore("SendNotification", {
-                Title = "Notice"; 
-                Text = "This feature is very risky! I suggest not to to use this on your main\nClick again to stop";
-                Duration = 15;
-            }) -- just because
+MiscSection:button({name = "Get Collectibles",callback = function()
+    if not cstore.GettingRares then
+        cstore.GettingRares = true
         for _, v in mapstore.Collectibles:GetChildren() do
             if v.Transparency ~= 0 then continue end
-            if not cstore.GettingClc then return end -- yeess
             local t = tick()
             repeat
-                Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(v.Position + Vector3.new(0, 0.069, 0)) -- see why its risky?:P
-                task.wait(0.08)
-            until tick() - t > 2.8 or v == nil -- 4 -> 2.8 omg??
+                Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(v.Position + Vector3.new(0, 1, 0))
+                task.wait()
+            until tick() - t > 4 or v == nil
         end
     end
 end})
 
-ToysSection:toggle({name = "Farm Snowflakes ⚠️",def = false,callback = function(value)
+ToysSection:toggle({name = "Farm Snowflakes",def = false,callback = function(value)
     togglestore.FarmSnowflakes = value
 end})
 
@@ -371,12 +338,12 @@ FeedbackSection:textbox({name = "Your Feedback",def = "",placeholder = "Your Fee
 end})
 
 FeedbackSection:button({name = "Send",callback = function()
-    spawn(function() if not cstore.FeedBackDebounce then
+    if not cstore.FeedBackDebounce then
         cstore.FeedBackDebounce = true
         functionstore.SendFeedback(cstore.CurrentFeedbackValue)
         task.wait(3)
         cstore.FeedBackDebounce = false
-    end end)
+    end
 end})
 
 
@@ -384,7 +351,7 @@ end})
 
 end})--]]
 
--- // loops (gonna kill you if u skid broo)
+-- // loops
 
 --[[
 task.spawn(function()
@@ -424,7 +391,6 @@ task.spawn(function()
                 if cstore.WebhookConvertHoney then functionstore.ToWebhook("wbh_convert") end
                 repeat
                     if cstore.ConvertMethod == "Teleport" then
-                        return
                         Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(functionstore.GetHivePosition())
                         cstore.Converting = true
                         task.wait(0.5)
